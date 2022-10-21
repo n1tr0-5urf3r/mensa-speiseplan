@@ -28,6 +28,10 @@ slash = SlashCommand(bot, sync_commands=True)
                                         value="Shedhalle"
                                 ),
                                 create_choice(
+                                        name="Prinz Karl",
+                                        value="Prinz Karl"
+                                ),
+                                create_choice(
                                         name="Nürtingen",
                                         value="Nürtingen"
                                 )
@@ -54,7 +58,7 @@ slash = SlashCommand(bot, sync_commands=True)
                         ]
                 )
         ])
-async def mensa(ctx: SlashContext, location=None, period=None):
+async def mensa(ctx: SlashContext, location="Morgenstelle", period=None):
 
     def embed_list_lines(embed,
                             lines,
@@ -176,10 +180,13 @@ async def mensa(ctx: SlashContext, location=None, period=None):
                 mensa_id = "665"
             elif location == "Morgenstelle":
                 mensa_id = "621"  # Tuebingen Morgenstelle
+            elif location == "Prinz Karl":
+                mensa_id = "623"  # Tuebingen Morgenstelle
+
 
         data = get_data(mensa_id)
-        if location and location == "Nürtingen":
-            data_caf = get_data(caf_id)
+        if location and location == "Morgenstelle":
+            data_caf = get_data("Morgenstelle")
         else:
             data_caf = None
 
