@@ -6,7 +6,7 @@ import datetime
 import re
 import time
 
-MY_GUILD = discord.Object(id=0)
+MY_GUILD = discord.Object(id=435769427481591818)
 
 class MyClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
@@ -27,6 +27,7 @@ class MyClient(discord.Client):
         # This copies the global commands over to your guild.
         self.tree.copy_global_to(guild=MY_GUILD)
         await self.tree.sync(guild=MY_GUILD)
+        #await self.tree.sync()
 
 intents = discord.Intents.default()
 client = MyClient(intents=intents)
@@ -36,10 +37,14 @@ async def on_ready():
     print(f'Logged in as {client.user} (ID: {client.user.id})')
     print('------')
 
-@client.tree.command()
-async def hello(interaction: discord.Interaction):
-    """Says hello!"""
-    await interaction.response.send_message(f'Hi, {interaction.user.mention}')
+@client.tree.command(name='sync', description='Owner only')
+async def sync(interaction: discord.Interaction):
+    if interaction.user.id == 240799236113956864:
+        await client.tree.sync()
+        await interaction.response.send_message('Command tree synced')
+    else:
+        await interaction.response.send_message('You must be the owner to use this command!')
+    await interaction.response.defer()
 
 # Enter server ID in guild_ids
 @client.tree.command(name="mensa", description="Speiseplan der Mensa der Uni Tübingen oder Nürtingen")
@@ -47,7 +52,7 @@ async def hello(interaction: discord.Interaction):
                         period="Zeitraum")
 @app_commands.choices(location=[
     app_commands.Choice(name="Morgenstelle", value="Morgenstelle"),
-    app_commands.Choice(name="Shedhalle", value="Shedhalle"),
+    app_commands.Choice(name="Wilhelmstraße", value="Wilhelmstraße"),
     app_commands.Choice(name="Prinz Karl", value="Prinz Karl"),
     app_commands.Choice(name="Nürtingen", value="Nürtingen"),
     ])
@@ -176,8 +181,8 @@ async def build_mensa_embed(location: str, period: str):
             heute_flag = True
 
     if location:
-        if location == "Shedhalle":
-            # Mensa shedhalle
+        if location == "Wilhelmstraße":
+            # Mensa wilhelmstrasse
             mensa_id = "611"
         elif location == "Nürtingen":
             # Nuertingen
@@ -285,9 +290,9 @@ class PersistentMensaView(discord.ui.View):
     async def morgenstelle(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.update_embed(interaction, location="Morgenstelle")
 
-    @discord.ui.button(emoji="2️⃣", label="Shedhalle", style=discord.ButtonStyle.grey, custom_id='persistent_view:sh')
-    async def shedhalle(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.update_embed(interaction, location="Shedhalle")
+    @discord.ui.button(emoji="2️⃣", label="Wilhelmstraße", style=discord.ButtonStyle.grey, custom_id='persistent_view:sh')
+    async def wilhelmstrasse(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.update_embed(interaction, location="Wilhelmstraße")
 
     @discord.ui.button(emoji="3️⃣", label="Prinz Karl", style=discord.ButtonStyle.grey, custom_id='persistent_view:pk')
     async def karl(self, interaction: discord.Interaction, button: discord.ui.Button):
